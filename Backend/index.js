@@ -30,6 +30,9 @@ mongoose.connect(uri).then(() => {
   console.log('🛢️ Connected to MongoDB')
 })
 
+import userRouter from './Module/User/user.routes.js'
+
+app.use('/api/v1/user', userRouter)
 app.get('/', async (req, res) => {
   res.send('API is running')
 })
