@@ -1,13 +1,28 @@
-import Navbar from '@/components/Navbar/Navbar';
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import Navbar from '@/components/Navbar/Navbar'
+import React, { useEffect, useState } from 'react'
+import { Outlet } from 'react-router-dom'
 
 const Main = () => {
-    return (
-        <div>
-            <Outlet/>
-        </div>
-    );
-};
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-export default Main;
+  // Scroll listener
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  return (
+    <div>
+      <Navbar
+        isScrolled={isScrolled}
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+      />
+      <Outlet />
+    </div>
+  )
+}
+
+export default Main

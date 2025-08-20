@@ -4,18 +4,18 @@ import { Upload, ChevronDown } from 'lucide-react';
 import Navbar from '../Navbar/Navbar';
 import AnimatedParticles from '../AnimatedParticles/AnimatedParticles';
 
-const HeroSection = ({ isScrolled, isMobileMenuOpen, setIsMobileMenuOpen }) => {
+const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
       {/* Animated background */}
       <AnimatedParticles />
 
       {/* Navigation */}
-      <Navbar
+      {/* <Navbar
         isScrolled={isScrolled}
         isMobileMenuOpen={isMobileMenuOpen}
         setIsMobileMenuOpen={setIsMobileMenuOpen}
-      />
+      /> */}
 
       {/* Hero Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
