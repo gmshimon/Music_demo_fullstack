@@ -8,8 +8,9 @@ import {
   Mail,
   Lock,
 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
-const Login = ({ onSwitchToRegister }) => {
+const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -20,6 +21,8 @@ const Login = ({ onSwitchToRegister }) => {
 
   // Animated background particles
   const [particles, setParticles] = useState([])
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const newParticles = [...Array(15)].map((_, i) => ({
@@ -221,7 +224,7 @@ const Login = ({ onSwitchToRegister }) => {
             <p className='text-gray-400'>
               Don't have an account?
               <button
-                onClick={onSwitchToRegister}
+                onClick={()=>navigate('/register')}
                 className='ml-1 text-purple-400 hover:text-purple-300 font-semibold transition-colors'
                 disabled={isLoading}
               >
@@ -232,25 +235,7 @@ const Login = ({ onSwitchToRegister }) => {
         </CardContent>
       </Card>
 
-      {/* Bottom text */}
-      <div className='absolute bottom-6 left-1/2 transform -translate-x-1/2 text-center'>
-        <p className='text-gray-500 text-sm'>
-          By continuing, you agree to our{' '}
-          <a
-            href='#'
-            className='text-purple-400 hover:text-purple-300 transition-colors'
-          >
-            Terms of Service
-          </a>{' '}
-          and{' '}
-          <a
-            href='#'
-            className='text-purple-400 hover:text-purple-300 transition-colors'
-          >
-            Privacy Policy
-          </a>
-        </p>
-      </div>
+     
     </div>
   )
 }
