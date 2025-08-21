@@ -17,3 +17,19 @@ export const getMySubmissions = async(req,res,next)=>{
         next(error)
     }
 }
+
+export const getAllSubmissions = async(req,res,next)=>{
+    try {
+
+        const submissions = await Submission.find({
+        }).populate('tracks');
+
+        res.status(200).json({
+            status:'Success',
+            message:'Successfully fetched',
+            data:submissions
+        })
+    } catch (error) {
+        next(error)
+    }
+}

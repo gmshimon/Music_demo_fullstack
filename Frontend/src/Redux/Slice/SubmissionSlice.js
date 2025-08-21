@@ -24,6 +24,19 @@ export const getMySubmissions = createAsyncThunk(
     }
   }
 )
+export const getAllSubmissions = createAsyncThunk(
+  'getAllSubmissions',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosSecure.get('/submission/all-submission')
+      return response.data.data
+    } catch (error) {
+      const msg =
+        error?.response?.data?.error || error.message || 'Failed to load track'
+      return rejectWithValue(msg)
+    }
+  }
+)
 
 const submissionSlice = createSlice({
   name: 'submission',
@@ -49,6 +62,22 @@ const submissionSlice = createSlice({
         state.submissions = action.payload
       })
       .addCase(getMySubmissions.rejected, state => {
+        state.getSubmissionLoading = false
+        state.getSubmissionSuccess = false
+        state.getSubmissionError = true
+      })
+      .addCase(getAllSubmissions.pending, state => {
+        state.getSubmissionLoading = true
+        state.getSubmissionSuccess = false
+        state.getSubmissionError = false
+      })
+      .addCase(getAllSubmissions.fulfilled, (state, action) => {
+        state.getSubmissionLoading = false
+        state.getSubmissionSuccess = true
+        state.getSubmissionError = false
+        state.submissions = action.payload
+      })
+      .addCase(getAllSubmissions.rejected, state => {
         state.getSubmissionLoading = false
         state.getSubmissionSuccess = false
         state.getSubmissionError = true
