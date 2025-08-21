@@ -26,8 +26,8 @@ app.use(bodyParser.json())
 
 setupWebSocket(server);
 
-const uri = 'mongodb://127.0.0.1:27017/music_demo'
-// const uri = process.env.MONGODB_URI
+// const uri = 'mongodb://127.0.0.1:27017/music_demo'
+const uri = process.env.MONGODB_URI
 
 mongoose.connect(uri).then(() => {
   console.log('🛢️ Connected to MongoDB')
