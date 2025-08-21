@@ -15,7 +15,6 @@ const AdminEmailTemplatesPage = () => {
   const {
     emails,
     getEmailLoading,
-    updateEmailLoading,
     updateEmailSuccess,
     updateEmailError
   } = useSelector(state => state.email)
@@ -36,7 +35,7 @@ const AdminEmailTemplatesPage = () => {
   useEffect(() => {
     if (updateEmailSuccess) {
       showSuccessToast('Email updated Successfully')
-      dispatch(reset())
+      // dispatch(reset())
     }
     if (updateEmailError) {
       showErrorToast('Something went wrong')
@@ -48,7 +47,7 @@ const AdminEmailTemplatesPage = () => {
     dispatch(updateEmail({ id: updated?._id, data: updated }))
   }
 
-  if (getEmailLoading || updateEmailLoading) {
+  if (getEmailLoading) {
     return <Loading />
   }
 
@@ -56,9 +55,9 @@ const AdminEmailTemplatesPage = () => {
     return (
       <div className='h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 text-gray-200'>
         <Helmet>
-          <meta charSet='utf-8' />
-          <title>Admin-Email</title>
-        </Helmet>
+        <meta charSet='utf-8' />
+        <title>Admin-Email</title>
+      </Helmet>
         <div className='text-center p-8 rounded-2xl bg-gray-900/60 backdrop-blur-md shadow-lg max-w-md animate-fadeIn'>
           {/* Icon */}
           <div className='flex justify-center mb-4'>
@@ -93,6 +92,10 @@ const AdminEmailTemplatesPage = () => {
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-gray-200'>
+      <Helmet>
+        <meta charSet='utf-8' />
+        <title>Admin-Email</title>
+      </Helmet>
       <ToastContainer />
       <div className='container mx-auto px-4 py-16 max-w-7xl'>
         <h1 className='text-3xl font-bold mb-8 text-center text-white'>

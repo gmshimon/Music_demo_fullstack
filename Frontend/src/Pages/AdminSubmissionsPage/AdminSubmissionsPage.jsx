@@ -21,7 +21,6 @@ const AdminSubmissionsPage = () => {
   const {
     submissions,
     getSubmissionLoading,
-    updateSubmissionLoading,
     updateSubmissionSuccess,
     updateSubmissionError
   } = useSelector(state => state.submission)
@@ -144,7 +143,7 @@ const AdminSubmissionsPage = () => {
     )
   }
 
-  if (getSubmissionLoading || updateSubmissionLoading) {
+  if (getSubmissionLoading) {
     return (
       <div>
         <Loading />
