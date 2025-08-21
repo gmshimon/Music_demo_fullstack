@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-
+import { ObjectId } from 'mongodb'
 const trackSchema = mongoose.Schema(
   {
     title: { type: String, required: true, index: true },
@@ -8,7 +8,7 @@ const trackSchema = mongoose.Schema(
     key: { type: String, trim: true }, // e.g. "Am", "C#"
     url: { type: String, required: true, trim: true },
     review: {
-      reviewer: { type: Types.ObjectId, ref: 'User', required: true },
+      reviewer: { type: ObjectId, ref: 'User', required: true },
       score: { type: Number, min: 1, max: 10, required: true },
       notes: { type: String, trim: true, maxlength: 3000 }, // internal
       feedbackForArtist: { type: String, trim: true, maxlength: 3000 }, // optional

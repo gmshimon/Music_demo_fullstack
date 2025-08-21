@@ -1,7 +1,7 @@
 import express from 'express'
-import verifyToken from '../../Middleware/verifyToken'
-import trackUploader from '../../Middleware/FileUpload/trackUploader'
-import { createTrack } from './track.controller'
+import verifyToken from '../../Middleware/verifyToken.js'
+import trackUploader from '../../Middleware/FileUpload/trackUploader.js'
+import { createTrack } from './track.controller.js'
 const router = express.Router()
 
 router.route('/create-track').post(verifyToken,trackUploader.single('file'),createTrack)
