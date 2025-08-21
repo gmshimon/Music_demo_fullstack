@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios"; 
 
-const prod = "https://music-demo-fullstack.vercel.app/api/v1/"
+const prod = "http://s000ow4csgccs8o00ck40gs8.31.97.71.226.sslip.io/api/v1/"
 
 const local = 'http://localhost:5000/api/v1/'
 
