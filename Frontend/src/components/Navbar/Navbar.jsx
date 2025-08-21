@@ -28,21 +28,44 @@ const Navbar = ({ isScrolled, isMobileMenuOpen, setIsMobileMenuOpen }) => {
       .toUpperCase() || 'U'
 
   const handleLogout = () => {
-    // 1) do your auth sign-out here (e.g., Firebase signOut())
-    // 2) dispatch Redux action to clear user
-    // dispatch(logout());
-    // 3) optional: navigate home
+    dispatch(logOut())
     navigate('/')
+  }
+
+  // Role-based menu items
+  const renderMenuItems = () => {
+    if (user?.role === 'Admin') {
+      return (
+        <>
+          <DropdownMenuItem onClick={() => navigate('/admin/submissions')}>
+            All Submissions
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate('/admin/email')}>
+            Email Editor
+          </DropdownMenuItem>
+        </>
+      )
+    }
+    if (user?.role === 'Artist') {
+      return (
+        <>
+          <DropdownMenuItem onClick={() => navigate('/submit')}>
+            New Submission
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate('/submission')}>
+            My Submissions
+          </DropdownMenuItem>
+        </>
+      )
+    }
+    return null
   }
 
   const UserMenu = (
     <DropdownMenu>
       <DropdownMenuTrigger className='outline-none'>
         <Avatar className='h-9 w-9 ring-1 ring-white/10 hover:ring-purple-400 transition'>
-          <AvatarImage
-            src={user?.photoURL || ''}
-            alt={user?.name || 'User'}
-          />
+          <AvatarImage src={user?.photoURL || ''} alt={user?.name || 'User'} />
           <AvatarFallback className='bg-purple-600/20 text-purple-300 text-sm'>
             {initials}
           </AvatarFallback>
@@ -57,14 +80,12 @@ const Navbar = ({ isScrolled, isMobileMenuOpen, setIsMobileMenuOpen }) => {
           {user?.email}
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-          Dashboard
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate('/profile')}>
-          Profile
-        </DropdownMenuItem>
+        {renderMenuItems()}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={()=>dispatch(logOut())} className='text-red-500'>
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className='text-red-500 cursor-pointer'
+        >
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -140,8 +161,44 @@ const Navbar = ({ isScrolled, isMobileMenuOpen, setIsMobileMenuOpen }) => {
             </a>
 
             {user ? (
-              <div className='flex items-center justify-between'>
-                {UserMenu}
+              <div className='flex flex-col space-y-2'>
+                {/* Role-based options */}
+                {user.role === 'Admin' && (
+                  <>
+                    <Button
+                      onClick={() => navigate('/submissions')}
+                      variant='ghost'
+                      className='w-full text-left'
+                    >
+                      All Submissions
+                    </Button>
+                    <Button
+                      onClick={() => navigate('/email-editor')}
+                      variant='ghost'
+                      className='w-full text-left'
+                    >
+                      Email Editor
+                    </Button>
+                  </>
+                )}
+                {user.role === 'Artist' && (
+                  <>
+                    <Button
+                      onClick={() => navigate('/new-submission')}
+                      variant='ghost'
+                      className='w-full text-left'
+                    >
+                      New Submission
+                    </Button>
+                    <Button
+                      onClick={() => navigate('/my-submissions')}
+                      variant='ghost'
+                      className='w-full text-left'
+                    >
+                      My Submissions
+                    </Button>
+                  </>
+                )}
                 <Button
                   onClick={handleLogout}
                   variant='ghost'
