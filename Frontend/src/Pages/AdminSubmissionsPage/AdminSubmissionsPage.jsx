@@ -3,22 +3,62 @@ import { Search, Filter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import WaveSurfer from 'wavesurfer.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllSubmissions } from '@/Redux/Slice/SubmissionSlice'
+import {
+  getAllSubmissions,
+  reset,
+  updateSubmission
+} from '@/Redux/Slice/SubmissionSlice'
 import SubmissionTrackCard from '@/components/SubmissionTrackCard/SubmissionTrackCard'
 import Loading from '@/components/Loading/Loading'
+import { showErrorToast, showSuccessToast } from '@/Utlis/toastUtils'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const AdminSubmissionsPage = () => {
-  const { submissions, getSubmissionLoading } = useSelector(
-    state => state.submission
-  )
+  const {
+    submissions,
+    getSubmissionLoading,
+    updateSubmissionLoading,
+    updateSubmissionSuccess,
+    updateSubmissionError
+  } = useSelector(state => state.submission)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('All')
   const [selected, setSelected] = useState(null)
+  const [formData, setFormData] = useState({
+    score: '',
+    notes: '',
+    feedback: '',
+    status: 'Pending'
+  })
 
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getAllSubmissions())
   }, [dispatch])
+
+  useEffect(() => {
+    if (selected) {
+      setFormData({
+        score: selected.review?.score || '',
+        notes: selected.review?.notes || '',
+        feedback: selected.review?.feedback || '',
+        status: selected.status || 'Pending'
+      })
+    }
+  }, [selected])
+  useEffect(() => {
+    if (updateSubmissionSuccess) {
+      showSuccessToast('Successfully review submitted')
+      dispatch(reset())
+      setSelected(null)
+    }
+    if (updateSubmissionError) {
+      showErrorToast('Something went Wrong')
+      dispatch(reset())
+      setSelected(null)
+    }
+  }, [dispatch, updateSubmissionError, updateSubmissionSuccess])
 
   const filtered = submissions.filter(
     s =>
@@ -28,21 +68,16 @@ const AdminSubmissionsPage = () => {
 
   const handleReviewSubmit = e => {
     e.preventDefault()
-    const form = new FormData(e.target)
-    const updated = submissions.map(sub =>
-      sub._id === selected._id
-        ? {
-            ...sub,
-            review: {
-              score: form.get('score'),
-              notes: form.get('notes'),
-              feedbackForArtist: form.get('feedback')
-            },
-            status: form.get('status')
-          }
-        : sub
-    )
-    setSelected(null)
+    const data = {
+      review: {
+        feedback: formData.feedback,
+        notes: formData.notes,
+        score: parseInt(formData.score)
+      },
+      status: formData.status
+    }
+    dispatch(updateSubmission({ id: selected._id, data }))
+    console.log('Review submitted:', data)
   }
 
   // WaveSurfer init for streaming waveform
@@ -68,7 +103,7 @@ const AdminSubmissionsPage = () => {
     })
   }
 
-  if (getSubmissionLoading) {
+  if (getSubmissionLoading || updateSubmissionLoading) {
     return (
       <div>
         <Loading />
@@ -78,6 +113,7 @@ const AdminSubmissionsPage = () => {
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-gray-200'>
+      <ToastContainer />
       <div className='container mx-auto px-4 py-16 max-w-7xl'>
         <h1 className='text-3xl font-bold mb-8 text-center text-white'>
           Admin Panel – Submissions
@@ -160,6 +196,9 @@ const AdminSubmissionsPage = () => {
                     name='score'
                     min='1'
                     max='10'
+                    onChange={e =>
+                      setFormData({ ...formData, score: e.target.value })
+                    }
                     defaultValue={selected.review?.score || ''}
                     required
                     className='w-full rounded px-3 py-2 bg-gray-800 text-gray-200'
@@ -170,6 +209,9 @@ const AdminSubmissionsPage = () => {
                   <textarea
                     name='notes'
                     defaultValue={selected.review?.notes || ''}
+                    onChange={e =>
+                      setFormData({ ...formData, notes: e.target.value })
+                    }
                     className='w-full rounded px-3 py-2 bg-gray-800 text-gray-200'
                   />
                 </div>
@@ -177,7 +219,10 @@ const AdminSubmissionsPage = () => {
                   <label className='block mb-1'>Feedback for Artist</label>
                   <textarea
                     name='feedback'
-                    defaultValue={selected.review?.feedbackForArtist || ''}
+                    defaultValue={selected.review?.feedback || ''}
+                    onChange={e =>
+                      setFormData({ ...formData, feedback: e.target.value })
+                    }
                     className='w-full rounded px-3 py-2 bg-gray-800 text-gray-200'
                   />
                 </div>
@@ -186,6 +231,9 @@ const AdminSubmissionsPage = () => {
                   <select
                     name='status'
                     defaultValue={selected.status}
+                    onChange={e =>
+                      setFormData({ ...formData, status: e.target.value })
+                    }
                     className='w-full rounded px-3 py-2 bg-gray-800 text-gray-200'
                   >
                     <option value='Pending'>Pending</option>

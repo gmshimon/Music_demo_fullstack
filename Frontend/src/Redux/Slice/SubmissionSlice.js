@@ -8,7 +8,11 @@ const initialState = {
 
   getSubmissionLoading: false,
   getSubmissionSuccess: false,
-  getSubmissionError: false
+  getSubmissionError: false,
+
+  updateSubmissionLoading: false,
+  updateSubmissionSuccess: false,
+  updateSubmissionError: false
 }
 
 export const getMySubmissions = createAsyncThunk(
@@ -38,6 +42,22 @@ export const getAllSubmissions = createAsyncThunk(
   }
 )
 
+export const updateSubmission = createAsyncThunk(
+  'updateSubmission',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await axiosSecure.put(`/submission/update/${id}`, data)
+      return response.data.data // assuming backend returns { submission: {...} }
+    } catch (error) {
+      const msg =
+        error?.response?.data?.error ||
+        error.message ||
+        'Failed to update submission'
+      return rejectWithValue(msg)
+    }
+  }
+)
+
 const submissionSlice = createSlice({
   name: 'submission',
   initialState,
@@ -46,6 +66,10 @@ const submissionSlice = createSlice({
       state.getSubmissionLoading = false
       state.getSubmissionSuccess = false
       state.getSubmissionError = false
+
+      state.updateSubmissionLoading = false
+      state.updateSubmissionSuccess = false
+      state.updateSubmissionError = false
     }
   },
   extraReducers: builder => {
@@ -81,6 +105,26 @@ const submissionSlice = createSlice({
         state.getSubmissionLoading = false
         state.getSubmissionSuccess = false
         state.getSubmissionError = true
+      })
+      .addCase(updateSubmission.pending, state => {
+        state.updateSubmissionLoading = true
+        state.updateSubmissionSuccess = false
+        state.updateSubmissionError = false
+      })
+      .addCase(updateSubmission.fulfilled, (state, action) => {
+        state.updateSubmissionLoading = false
+        state.updateSubmissionSuccess = true
+        state.updateSubmissionError = false
+
+        // update that submission in state
+        state.submissions = state.submissions.map(sub =>
+          sub._id === action.payload._id ? action.payload : sub
+        )
+      })
+      .addCase(updateSubmission.rejected, state => {
+        state.updateSubmissionLoading = false
+        state.updateSubmissionSuccess = false
+        state.updateSubmissionError = true
       })
   }
 })

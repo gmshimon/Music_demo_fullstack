@@ -37,12 +37,12 @@ const submissionSchema = mongoose.Schema(
       reviewer: { type: ObjectId, ref: 'users' },
       score: { type: Number, min: 1, max: 10 },
       notes: { type: String, trim: true, maxlength: 3000 }, // internal
-      feedbackForArtist: { type: String, trim: true, maxlength: 3000 }, // optional
+      feedback: { type: String, trim: true, maxlength: 3000 }, // optional
       createdAt: { type: Date, default: Date.now }
     },
     status: {
       type: String,
-      enum: ['Pending', 'Approved', 'Rejected'],
+      enum: ['Pending', 'In-Review', 'Approved', 'Rejected'],
       default: 'Pending',
       index: true
     },
