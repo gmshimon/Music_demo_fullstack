@@ -16,17 +16,34 @@ const userSchema = mongoose.Schema(
       lowercase: true,
       validate: [validate.isEmail, 'Please enter a valid email']
     },
-    role:{
-      type:String,
-      enum:['Admin','Artist'],
-      default:"Artist"
+    phone: {
+      type: String,
+      default: ''
+    },
+    bio: {
+      type: String,
+      default: ''
+    },
+    location: {
+      type: String
+    },
+    socials: {
+      instagram: String,
+      soundcloud: String,
+      spotify: String,
+      youtube: String
+    },
+    role: {
+      type: String,
+      enum: ['Admin', 'Artist'],
+      default: 'Artist'
     }
   },
   {
     timestamps: true
   }
 )
-
+userSchema.index({ email: 1 }, { unique: true })
 const Users = mongoose.model('users', userSchema)
 
 export default Users
