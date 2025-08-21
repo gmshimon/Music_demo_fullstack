@@ -52,12 +52,14 @@ export const createUser = createAsyncThunk(
     const email = formdata.get("email")
     const password = formdata.get("password")
     const name = formdata.get("name")
-    console.log("signing in with", email, password);
+    const userData ={
+      name,email,password
+    }
     const res = await createUserWithEmailAndPassword(auth, email, password)
     const result = updateProfile(auth.currentUser, {
       displayName: name
     })
-    const data = await saveUserData(formdata)
+    const data = await saveUserData(userData)
     return data
   }
 )

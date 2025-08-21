@@ -1,12 +1,27 @@
 import HeroSection from '@/components/HeroSection/HeroSection'
 import HowItWorksSection from '@/components/HowItWorksSection/HowItWorksSection'
 import WhyChooseSection from '@/components/WhyChooseSection/WhyChooseSection'
+import { reset } from '@/Redux/Slice/AuthSlice'
+import { showSuccessToast } from '@/Utlis/toastUtils'
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Home = () => {
+  const { isLoginSuccess } = useSelector(state => state.user)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState({})
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (isLoginSuccess) {
+      showSuccessToast('Login Successful')
+      dispatch(reset())
+    }
+  }, [dispatch, isLoginSuccess])
 
   // Scroll listener
   useEffect(() => {
@@ -36,6 +51,7 @@ const Home = () => {
 
   return (
     <div className='min-h-screen bg-black text-white overflow-x-hidden'>
+      <ToastContainer/>
       <HeroSection
         isScrolled={isScrolled}
         isMobileMenuOpen={isMobileMenuOpen}

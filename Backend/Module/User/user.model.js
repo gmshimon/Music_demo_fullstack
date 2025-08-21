@@ -16,6 +16,11 @@ const userSchema = mongoose.Schema(
       lowercase: true,
       validate: [validate.isEmail, 'Please enter a valid email']
     },
+    role:{
+      type:String,
+      enum:['Admin','Artist'],
+      default:"Artist"
+    }
   },
   {
     timestamps: true

@@ -3,11 +3,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Eye, EyeOff, Music, Mail, Lock, User, Check, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { showErrorToast, showSuccessToast } from '@/Utlis/toastUtils'
+import { createUser, reset } from '@/Redux/Slice/AuthSlice'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Registration = () => {
+  const { isCreateUserLoading, isCreateUserSuccess, isCreateUserError } =
+    useSelector(state => state.user)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -27,6 +33,18 @@ const Registration = () => {
   const [particles, setParticles] = useState([])
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (isCreateUserSuccess) {
+      showSuccessToast('Registration successful')
+      dispatch(reset())
+    }
+    if (isCreateUserError) {
+      showErrorToast('Something went wrong')
+      dispatch(reset())
+    }
+  }, [dispatch, isCreateUserError, isCreateUserSuccess])
 
   useEffect(() => {
     const newParticles = [...Array(15)].map((_, i) => ({
@@ -97,15 +115,16 @@ const Registration = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async e => {
+    e.preventDefault()
     if (!validateForm()) return
 
-    setIsLoading(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    setIsLoading(false)
+    const data = new FormData()
+    data.append('name', formData.name)
+    data.append('email', formData.email)
+    data.append('password', formData.password)
 
-    console.log('Registration submitted:', formData)
+    dispatch(createUser(data))
   }
 
   const getPasswordStrengthScore = () => {
@@ -129,6 +148,7 @@ const Registration = () => {
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4 relative overflow-hidden'>
+      <ToastContainer/>
       {/* Animated background particles */}
       <div className='absolute inset-0'>
         {particles.map(particle => (
@@ -189,7 +209,7 @@ const Registration = () => {
                   onChange={handleInputChange}
                   className='w-full pl-11 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300'
                   placeholder='Enter your full name'
-                  disabled={isLoading}
+                  // disabled={isCreateUserLoading}
                 />
               </div>
               {errors.name && (
@@ -216,7 +236,7 @@ const Registration = () => {
                   onChange={handleInputChange}
                   className='w-full pl-11 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300'
                   placeholder='Enter your email'
-                  disabled={isLoading}
+                  disabled={isCreateUserLoading}
                 />
               </div>
               {errors.email && (
@@ -243,13 +263,13 @@ const Registration = () => {
                   onChange={handleInputChange}
                   className='w-full pl-11 pr-11 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300'
                   placeholder='Create a strong password'
-                  disabled={isLoading}
+                  disabled={isCreateUserLoading}
                 />
                 <button
                   type='button'
                   onClick={() => setShowPassword(!showPassword)}
                   className='absolute right-3 top-3.5 text-gray-400 hover:text-gray-300 transition-colors'
-                  disabled={isLoading}
+                  disabled={isCreateUserLoading}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -336,13 +356,13 @@ const Registration = () => {
                   onChange={handleInputChange}
                   className='w-full pl-11 pr-11 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300'
                   placeholder='Confirm your password'
-                  disabled={isLoading}
+                  disabled={isCreateUserLoading}
                 />
                 <button
                   type='button'
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className='absolute right-3 top-3.5 text-gray-400 hover:text-gray-300 transition-colors'
-                  disabled={isLoading}
+                  disabled={isCreateUserLoading}
                 >
                   {showConfirmPassword ? (
                     <EyeOff size={18} />
@@ -362,9 +382,9 @@ const Registration = () => {
             <Button
               onClick={handleSubmit}
               className='w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-purple-500/25 transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100'
-              disabled={isLoading}
+              disabled={isCreateUserLoading}
             >
-              {isLoading ? (
+              {isCreateUserLoading ? (
                 <div className='flex items-center justify-center'>
                   <div className='animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2'></div>
                   Creating Account...
