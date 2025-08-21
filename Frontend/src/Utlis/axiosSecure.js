@@ -1,15 +1,13 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios";
 
-
-// const prod = "https://bistro-boss-fytb.onrender.com/api/v1/"
-const prod = "https://e-commerce-henna-beta-50.vercel.app/api/v1/"
+const prod = "https://music-demo-fullstack.vercel.app/api/v1/"
 
 const local = 'http://localhost:5000/api/v1/'
 
 // Create an Axios instance
 const axiosSecure = axios.create({
-  baseURL: local,
+  baseURL: prod,
 });
 
 // Add a request interceptor to include the token and Content-Type headers
