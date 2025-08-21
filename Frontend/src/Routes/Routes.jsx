@@ -1,4 +1,5 @@
 import Main from "@/Layout/Main";
+import AdminSubmissionsPage from "@/Pages/AdminSubmissionsPage/AdminSubmissionsPage";
 import ArtistSubmissionPage from "@/Pages/ArtistSubmissionPage/ArtistSubmissionPage";
 import ArtistSubmissionsListPage from "@/Pages/ArtistSubmissionsListPage/ArtistSubmissionsListPage";
 import Home from "@/Pages/Home/Home";
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
             {
                 path:'submission',
                 element:<ArtistSubmissionsListPage/>
+            },
+            {
+                path:'admin/submissions',
+                element:<AdminSubmissionsPage/>
             }
         ]
     }
