@@ -20,7 +20,7 @@ npm install --force
 Then
 
 ```bash
-npm dev
+npm run dev
 ```
 
 ### Start the frontend 
