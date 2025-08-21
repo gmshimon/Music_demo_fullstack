@@ -9,9 +9,10 @@ export const uploadTrackFile = async file => {
     })
     const b64 = Buffer.from(file.buffer).toString('base64')
     let dataURI = 'data:' + file.mimetype + ';base64,' + b64
+    
     const result = await cloudinary.uploader.upload(dataURI, {
       asset_folder: 'Music_demo/track',
-      resource_type: file.fieldname
+      resource_type: "video"
     })
     return result.url
   } catch (error) {

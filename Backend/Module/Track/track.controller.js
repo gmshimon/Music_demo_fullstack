@@ -1,69 +1,89 @@
 import { submissionConfirmationTemplate } from '../../Utlis/EmailTemplate/email-templates.js'
 import { sendEmail } from '../../Utlis/sendEmail.js'
-import Users from '../User/user.model.js'
+import Submission from '../Submission/submission.model.js'
 import { uploadTrackFile } from './track.cloudinary.js'
 import Tracks from './track.model.js'
 
 export const createTrack = async (req, res, next) => {
   try {
-    const userId = req.user?._id
-    const file = req.file
-
+    const files = req.files || []
+console.log("files: ",req.files)
     const {
-      // track fields
-      title,
-      genre,
-      bpm,
-      key,
-      // user updates (all optional; only provided fields will be updated)
       name,
+      email,
       phone,
-      bio,
+      biography,
       location,
-      socials = {}
+      'socials.instagram': instagram,
+      'socials.soundcloud': soundcloud,
+      'socials.spotify': spotify,
+      'socials.youtube': youtube,
+      tracks: tracksMetaRaw
     } = req.body
 
-    if (!title) return res.status(400).json({ error: 'title is required' })
-
-    let finalUrl
-    if (file) {
-      finalUrl = await uploadTrackFile(file)
+    // Parse track metadata array (aligned with files order)
+    let tracksMeta = []
+    if (typeof tracksMetaRaw === 'string') {
+      try {
+        tracksMeta = JSON.parse(tracksMetaRaw)
+      } catch {
+        tracksMeta = []
+      }
+    } else if (Array.isArray(tracksMetaRaw)) {
+      tracksMeta = tracksMetaRaw
     }
 
-    const $set = {}
-    if (name !== undefined) $set.name = name
-    if (phone !== undefined) $set.phone = phone
-    if (bio !== undefined) $set.bio = bio
-    if (location !== undefined)
-      $set.location = location[
-        ('instagram', 'soundcloud', 'spotify', 'youtube')
-      ].forEach(k => {
-        if (socials && socials[k] !== undefined)
-          $set[`socials.${k}`] = socials[k]
-      })
+    // 1) upload all files in parallel
+    const urls = await Promise.all(files.map(f => uploadTrackFile(f)))
+    console.log(urls)
+    // 2) build track docs (order-based mapping)
+    const trackData = urls.map((url, i) => ({
+      title: tracksMeta[i]?.title,
+      genre: tracksMeta[i]?.genre,
+      bpm: tracksMeta[i]?.bpm,
+      key: tracksMeta[i]?.key,
+      url
+    }))
 
-    const user = await Users.findByIdAndUpdate(userId, { $set }, { new: true })
-    if (!updatedUser) return res.status(404).json({ error: 'User not found' })
+    // 3) insert tracks
+    const createdTracks = await Tracks.insertMany(trackData)
 
-    const trackDoc = await Tracks.create({
-      title,
-      genre,
-      bpm,
-      key,
-      url: finalUrl
+    // 4) create submission with artist snapshot + track IDs
+    const submission = await Submission.create({
+      name,
+      email,
+      phone,
+      biography,
+      location,
+      socials: { instagram, soundcloud, spotify, youtube },
+      tracks: createdTracks.map(t => t._id)
     })
 
-    const emailHtml = submissionConfirmationTemplate({})
+    // 1) Build email HTML
+    const html = submissionConfirmationTemplate({
+      userName: name,
+      tracks: createdTracks.map(t => ({
+        title: t.title,
+        genre: t.genre,
+        bpm: t.bpm,
+        key: t.key,
+        url: t.url,
+        uploadedAt: t.createdAt
+      })),
+      labelName: 'Music Demo'
+    })
+
+    // 2) Send email
     await sendEmail({
-      to: user.email,
-      subject: 'Track Submission confirmation',
-      html: emailHtml
+      to: email,
+      subject: `Submission received – ${createdTracks.length} track(s) uploaded`,
+      html
     })
 
-    res.status(200).json({
+    res.status(201).json({
       status: 'Success',
-      message: 'Track Uploaded Successfully',
-      data: trackDoc
+      message: 'Submission created',
+      data: submission
     })
   } catch (error) {
     next(error)

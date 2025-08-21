@@ -34,7 +34,7 @@ import userRouter from './Module/User/user.routes.js'
 import trackRouter from './Module/Track/track.routes.js'
 
 app.use('/api/v1/user', userRouter)
-app.use('/api/v1/track', trackRouter)
+app.use('/api/v1/tracks', trackRouter)
 app.get('/', async (req, res) => {
   res.send('API is running')
 })

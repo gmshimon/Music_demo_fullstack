@@ -18,7 +18,7 @@ const trackUploader = multer({
     }
   },
   limits: {
-    fileSize: 1024 * 1024 * 5 // 5MB
+    fileSize: 1024 * 1024 * 10 // 5MB
   }
 })
 

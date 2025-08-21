@@ -14,21 +14,18 @@ const MultiTrackUploader = ({ tracks, setTracks }) => {
     const newTracks = []
     const errors = []
 
-    Array.from(fileList).forEach((file, index) => {
+    Array.from(fileList).forEach(file => {
       const error = validateFile(file)
       if (error) {
         errors.push({ file: file.name, error })
       } else {
         newTracks.push({
-          id: Date.now() + index,
           file,
           title: file.name.replace(/\.[^/.]+$/, ''),
           genre: '',
           bpm: '',
           key: '',
-          description: '',
-          uploadProgress: 0,
-          status: 'pending' // pending, uploading, completed, error
+          description: ''
         })
       }
     })
@@ -108,21 +105,24 @@ const MultiTrackUploader = ({ tracks, setTracks }) => {
             Supported formats: MP3, WAV, FLAC, M4A (Max 100MB each)
           </p>
           <input
+            id='file-upload'
             type='file'
             multiple
-            accept='.mp3,.wav,.flac,.m4a'
+            accept='.mp3,.wav,.flac,.m4a,.mp4'
             onChange={handleFileInput}
-            className='hidden'
-            id='file-upload'
+            className='sr-only' // better than display:none for iOS
           />
-          <label htmlFor='file-upload'>
-            <Button
-              variant='outline'
-              className='border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white'
-            >
+
+          <Button
+            asChild
+            variant='outline'
+            className='border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white'
+            type='button'
+          >
+            <label htmlFor='file-upload' className='cursor-pointer'>
               Choose Files
-            </Button>
-          </label>
+            </label>
+          </Button>
         </div>
 
         {/* Uploaded Tracks */}

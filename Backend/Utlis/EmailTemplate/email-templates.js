@@ -6,60 +6,74 @@ const esc = (s = '') =>
         m
       ])
   )
-// 1) Submission Confirmation
-export const submissionConfirmationTemplate = ({
-  userName, // from updated user profile or req.user
-  title, // req.body.title
-  genre, // req.body.genre (optional)
-  bpm, // req.body.bpm (optional)
-  key, // req.body.key (optional)
-  url, // finalUrl || req.body.url (stream/download)
-  uploadedAt, // trackDoc.createdAt or new Date()
-  labelName = 'Your Label'
-} = {}) => {
-  return `
-    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
-      <h2 style="color: #2c3e50; margin: 0 0 8px;">Hi ${esc(
-        userName || 'there'
-      )},</h2>
-      <p>Your track titled <strong>"${esc(
-        title
-      )}"</strong> has been uploaded successfully.</p>
 
-      <div style="margin:12px 0 16px; padding:12px; border:1px solid #eee; border-radius:8px; background:#fafafa;">
-        <div style="font-weight:600; margin-bottom:6px;">Track details</div>
+export const submissionConfirmationTemplate = ({
+  userName,
+  tracks = [], // array of { title, genre, bpm, key, url, uploadedAt }
+  labelName = 'Music Demo'
+} = {}) => {
+  const trackListHtml = tracks
+    .map(
+      (t, i) => `
+      <div style="margin-bottom:12px; padding:12px; border:1px solid #eee; border-radius:6px; background:#fafafa;">
+        <div style="font-weight:600; margin-bottom:6px;">Track ${i + 1}</div>
         <div style="font-size:14px;">
-          ${genre ? `<div><strong>Genre:</strong> ${esc(genre)}</div>` : ''}
+          <div><strong>Title:</strong> ${esc(t.title || 'Untitled')}</div>
+          ${t.genre ? `<div><strong>Genre:</strong> ${esc(t.genre)}</div>` : ''}
           ${
-            bpm || bpm === 0
-              ? `<div><strong>BPM:</strong> ${esc(bpm)}</div>`
+            typeof t.bpm !== 'undefined'
+              ? `<div><strong>BPM:</strong> ${esc(t.bpm)}</div>`
               : ''
           }
-          ${key ? `<div><strong>Key:</strong> ${esc(key)}</div>` : ''}
+          ${t.key ? `<div><strong>Key:</strong> ${esc(t.key)}</div>` : ''}
           ${
-            uploadedAt
+            t.uploadedAt
               ? `<div><strong>Uploaded:</strong> ${new Date(
-                  uploadedAt
+                  t.uploadedAt
                 ).toLocaleString()}</div>`
               : ''
           }
           ${
-            url
+            t.url
               ? `<div><strong>Link:</strong> <a href="${esc(
-                  url
+                  t.url
                 )}" style="color:#2563eb; text-decoration:none;">Listen / Download</a></div>`
               : ''
           }
         </div>
       </div>
+    `
+    )
+    .join('')
 
-      <p>We’ll notify you once the review is complete.</p>
-      <br />
-      <p style="color: #888;">Thank you for submitting to ${esc(labelName)}.</p>
-      <hr />
-      <p style="font-size: 12px; color: #aaa; margin:0;">This is an automated message from ${esc(
-        labelName
-      )}.</p>
+  return `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width:600px; margin:0 auto; color:#333; line-height:1.6;">
+      <h2 style="color:#1a1a1a; margin:0 0 16px;">Hello ${esc(
+        userName || 'Artist'
+      )},</h2>
+      <p style="margin:0 0 16px;">
+        Thank you for submitting your music to <strong>${esc(
+          labelName
+        )}</strong>.
+        We’ve received the following tracks:
+      </p>
+
+      ${trackListHtml}
+
+      <p style="margin:0 0 12px;">
+        Our A&amp;R team will review your submission and get back to you shortly.
+      </p>
+
+      <p style="color:#777; font-size:13px; margin:0;">
+        – The ${esc(labelName)} Team
+      </p>
+
+      <hr style="margin:24px 0; border:none; border-top:1px solid #eee;" />
+      <p style="font-size:11px; color:#999; margin:0;">
+        This is an automated confirmation email from ${esc(
+          labelName
+        )}. Please do not reply directly.
+      </p>
     </div>
   `
 }

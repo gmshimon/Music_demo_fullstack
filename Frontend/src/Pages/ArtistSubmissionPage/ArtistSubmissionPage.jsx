@@ -1,12 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Upload, User, CheckCircle } from 'lucide-react'
 import MultiTrackUploader from '@/components/MultiTrackUploader/MultiTrackUploader'
 import ArtistInfoForm from '@/components/ArtistInfoForm/ArtistInfoForm'
 import ReviewSubmission from '@/components/ReviewSubmission/ReviewSubmission'
 import StepsProgress from '@/components/StepsProgress/StepsProgress'
+import { buildSubmissionForm } from '@/Utlis/buildSubmissionForm'
+import { useDispatch, useSelector } from 'react-redux'
+import { showErrorToast, showSuccessToast } from '@/Utlis/toastUtils'
+import { createTrack, reset } from '@/Redux/Slice/TrackSlice'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const ArtistSubmissionPage = () => {
+  const { createTrackLoading, createTrackSuccess, createTrackError } =
+    useSelector(state => state.track)
   const [currentStep, setCurrentStep] = useState(1)
   const [tracks, setTracks] = useState([])
   const [artistInfo, setArtistInfo] = useState({
@@ -19,12 +27,39 @@ const ArtistSubmissionPage = () => {
       instagram: '',
       soundcloud: '',
       spotify: '',
-      youtube: '',
-      twitter: ''
+      youtube: ''
     }
   })
   const [errors, setErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (createTrackSuccess) {
+      showSuccessToast('Submission successful')
+      dispatch(reset())
+      // Reset
+      setTracks([])
+      setArtistInfo({
+        name: '',
+        email: '',
+        phone: '',
+        location: '',
+        biography: '',
+        socialMedia: {
+          instagram: '',
+          soundcloud: '',
+          spotify: '',
+          youtube: ''
+        }
+      })
+      setCurrentStep(1)
+    }
+    if (createTrackError) {
+      showErrorToast('Something went wrong')
+      dispatch(reset())
+    }
+  }, [createTrackError, createTrackSuccess, dispatch])
 
   const validateArtistInfo = () => {
     const newErrors = {}
@@ -38,7 +73,8 @@ const ArtistSubmissionPage = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async e => {
+    e.preventDefault()
     if (!validateArtistInfo()) {
       setCurrentStep(2)
       return
@@ -56,30 +92,10 @@ const ArtistSubmissionPage = () => {
       return
     }
 
-    setIsSubmitting(true)
-    await new Promise(resolve => setTimeout(resolve, 3000)) // simulate API
-    setIsSubmitting(false)
-    alert(
-      "Submission successful! We'll review your tracks and get back to you soon."
-    )
+    const submissionData = { artistInfo, tracks }
+    const form = buildSubmissionForm(submissionData)
 
-    // Reset
-    setTracks([])
-    setArtistInfo({
-      name: '',
-      email: '',
-      phone: '',
-      location: '',
-      biography: '',
-      socialMedia: {
-        instagram: '',
-        soundcloud: '',
-        spotify: '',
-        youtube: '',
-        twitter: ''
-      }
-    })
-    setCurrentStep(1)
+    dispatch(createTrack(form))
   }
 
   const steps = [
@@ -87,9 +103,9 @@ const ArtistSubmissionPage = () => {
     { number: 2, title: 'Artist Info', icon: User },
     { number: 3, title: 'Review & Submit', icon: CheckCircle }
   ]
-
   return (
     <div className='min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800'>
+        <ToastContainer/>
       <div className='container mx-auto px-4 pb-8 max-w-4xl pt-24'>
         <StepsProgress steps={steps} currentStep={currentStep} />
 
@@ -129,10 +145,10 @@ const ArtistSubmissionPage = () => {
           ) : (
             <Button
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={createTrackLoading}
               className='bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white'
             >
-              {isSubmitting ? (
+              {createTrackLoading ? (
                 <div className='flex items-center'>
                   <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></div>
                   Submitting...

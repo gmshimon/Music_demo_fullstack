@@ -16,23 +16,6 @@ const userSchema = mongoose.Schema(
       lowercase: true,
       validate: [validate.isEmail, 'Please enter a valid email']
     },
-    phone: {
-      type: String,
-      default: ''
-    },
-    bio: {
-      type: String,
-      default: ''
-    },
-    location: {
-      type: String
-    },
-    socials: {
-      instagram: String,
-      soundcloud: String,
-      spotify: String,
-      youtube: String
-    },
     role: {
       type: String,
       enum: ['Admin', 'Artist'],
