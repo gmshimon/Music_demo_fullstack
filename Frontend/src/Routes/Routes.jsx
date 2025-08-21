@@ -1,4 +1,5 @@
 import Main from "@/Layout/Main";
+import AdminEmailTemplatesPage from "@/Pages/AdminEmailTemplatesPage/AdminEmailTemplatesPage";
 import AdminSubmissionsPage from "@/Pages/AdminSubmissionsPage/AdminSubmissionsPage";
 import ArtistSubmissionPage from "@/Pages/ArtistSubmissionPage/ArtistSubmissionPage";
 import ArtistSubmissionsListPage from "@/Pages/ArtistSubmissionsListPage/ArtistSubmissionsListPage";
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
             {
                 path:'admin/submissions',
                 element:<AdminSubmissionsPage/>
+            },
+            {
+                path:'admin/email',
+                element:<AdminEmailTemplatesPage/>
             }
         ]
     }

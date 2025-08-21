@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import axios from '../../Utlis/axios.js'
 import axiosSecure from '../../Utlis/axiosSecure.js'
 
 const initialState = {

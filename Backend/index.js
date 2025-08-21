@@ -36,11 +36,13 @@ mongoose.connect(uri).then(() => {
 import userRouter from './Module/User/user.routes.js'
 import trackRouter from './Module/Track/track.routes.js'
 import submissionRouter from './Module/Submission/submission.routes.js'
+import emailRoutes from './Module/Email/email.routes.js'
 
 
 app.use('/api/v1/user', userRouter)
 app.use('/api/v1/tracks', trackRouter)
 app.use('/api/v1/submission', submissionRouter)
+app.use('/api/v1/email', emailRoutes) 
 app.get('/', async (req, res) => {
   res.send('API is running')
 })
