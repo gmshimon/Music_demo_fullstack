@@ -1,5 +1,6 @@
 import Main from "@/Layout/Main";
 import ArtistSubmissionPage from "@/Pages/ArtistSubmissionPage/ArtistSubmissionPage";
+import ArtistSubmissionsListPage from "@/Pages/ArtistSubmissionsListPage/ArtistSubmissionsListPage";
 import Home from "@/Pages/Home/Home";
 import Login from "@/Pages/Login/Login";
 import Registration from "@/Pages/Registration/Registration";
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
             {
                 path:'submit',
                 element:<ArtistSubmissionPage/>
+            },
+            {
+                path:'submission',
+                element:<ArtistSubmissionsListPage/>
             }
         ]
     }
