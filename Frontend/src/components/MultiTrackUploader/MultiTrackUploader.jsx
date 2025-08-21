@@ -6,7 +6,7 @@ import TrackCard from "../TrackCard/TrackCard";
 import { validateFile } from "@/Utlis/fileValidation";
 import useUploadSimulator from "@/hooks/useUploadSimulator";
 
-export default function MultiTrackUploader({ tracks, setTracks }) {
+const MultiTrackUploader=({ tracks, setTracks })=>{
   const [dragActive, setDragActive] = useState(false);
   const { simulateUpload } = useUploadSimulator();
 
@@ -132,3 +132,4 @@ export default function MultiTrackUploader({ tracks, setTracks }) {
     </Card>
   );
 }
+export default MultiTrackUploader;
