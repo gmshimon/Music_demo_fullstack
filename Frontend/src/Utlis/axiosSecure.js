@@ -7,7 +7,7 @@ const local = 'http://localhost:5000/api/v1/'
 
 // Create an Axios instance
 const axiosSecure = axios.create({
-  baseURL: prod,
+  baseURL: local,
 });
 
 // Add a request interceptor to include the token and Content-Type headers

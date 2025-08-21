@@ -9,7 +9,7 @@ export const useAdminSocket = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const socket = io("http://s000ow4csgccs8o00ck40gs8.31.97.71.226.sslip.io", {
+    const socket = io("http://localhost:5000", {
       auth: { token:localStorage.getItem('userToken') }, // JWT
     });
 
