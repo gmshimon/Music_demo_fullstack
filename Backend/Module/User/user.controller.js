@@ -3,7 +3,6 @@ import Users from './user.model.js'
 export const createUser = async (req, res, next) => {
   try {
     const userData = req.body
-    console.log(req.body)
     const { email } = userData
 
     const user = await Users.findOne({ email: email })

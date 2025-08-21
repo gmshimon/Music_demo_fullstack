@@ -69,7 +69,16 @@ const submissionSlice = createSlice({
       state.updateSubmissionLoading = false
       state.updateSubmissionSuccess = false
       state.updateSubmissionError = false
-    }
+    },
+    addSubmission: (state, action) => {
+      state.submissions = [action.payload, ...state.submissions];
+    },
+    updateSubmissionStatus: (state, action) => {
+      const { submissionId, status } = action.payload;
+      state.submissions = state.submissions.map((sub) =>
+        sub._id === submissionId ? { ...sub, status } : sub
+      );
+    },
   },
   extraReducers: builder => {
     builder
@@ -128,6 +137,6 @@ const submissionSlice = createSlice({
   }
 })
 
-export const { reset } = submissionSlice.actions
+export const { reset, addSubmission, updateSubmissionStatus } = submissionSlice.actions
 
 export default submissionSlice.reducer

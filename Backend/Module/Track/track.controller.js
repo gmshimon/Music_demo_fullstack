@@ -1,3 +1,4 @@
+import { emitNewSubmission } from '../../Socket/index.js'
 import { submissionConfirmationTemplate } from '../../Utlis/EmailTemplate/email-templates.js'
 import { sendEmail } from '../../Utlis/sendEmail.js'
 import Submission from '../Submission/submission.model.js'
@@ -6,7 +7,7 @@ import Tracks from './track.model.js'
 
 export const createTrack = async (req, res, next) => {
   try {
-    const {_id} = req.user
+    const { _id } = req.user
     const files = req.files || []
 
     const {
@@ -57,7 +58,7 @@ export const createTrack = async (req, res, next) => {
       location,
       socials: { instagram, soundcloud, spotify, youtube },
       tracks: createdTracks.map(t => t._id),
-      createdBy:_id
+      createdBy: _id
     })
 
     // 1) Build email HTML
@@ -81,10 +82,19 @@ export const createTrack = async (req, res, next) => {
       html
     })
 
+    // ✅ emit event to all connected admins
+    emitNewSubmission({
+      ...submission.toObject(),
+      tracks: createdTracks // include full track docs so admin gets useful data
+    })
+
     res.status(201).json({
       status: 'Success',
       message: 'Submission created',
-      data: submission
+      data: {
+        ...submission.toObject(),
+        tracks: createdTracks
+      }
     })
   } catch (error) {
     next(error)

@@ -13,6 +13,7 @@ import Loading from '@/components/Loading/Loading'
 import { showErrorToast, showSuccessToast } from '@/Utlis/toastUtils'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useAdminSocket } from '@/hooks/useAdminSocket'
 
 const AdminSubmissionsPage = () => {
   const {
@@ -32,6 +33,7 @@ const AdminSubmissionsPage = () => {
     status: 'Pending'
   })
 
+    useAdminSocket();
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getAllSubmissions())
