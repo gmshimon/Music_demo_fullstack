@@ -15,6 +15,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useAdminSocket } from '@/hooks/useAdminSocket'
 import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
 
 const AdminSubmissionsPage = () => {
   const {
@@ -108,38 +109,40 @@ const AdminSubmissionsPage = () => {
     })
   }
 
-  if (user?.role !== "Admin") {
-  return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 text-gray-200">
-      <div className="text-center p-8 rounded-2xl bg-gray-900/60 backdrop-blur-md shadow-lg max-w-md animate-fadeIn">
-        {/* Icon */}
-        <div className="flex justify-center mb-4">
-          <div className="p-4 rounded-full bg-red-500/10 border border-red-500/30">
-            <ShieldAlert className="w-10 h-10 text-red-400" />
+  if (user?.role !== 'Admin') {
+    return (
+      <div className='h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 text-gray-200'>
+        <div className='text-center p-8 rounded-2xl bg-gray-900/60 backdrop-blur-md shadow-lg max-w-md animate-fadeIn'>
+          {/* Icon */}
+          <div className='flex justify-center mb-4'>
+            <div className='p-4 rounded-full bg-red-500/10 border border-red-500/30'>
+              <ShieldAlert className='w-10 h-10 text-red-400' />
+            </div>
           </div>
+
+          {/* Heading */}
+          <h1 className='text-2xl font-bold text-red-400 mb-2'>
+            Access Denied
+          </h1>
+
+          {/* Message */}
+          <p className='text-gray-400 mb-6'>
+            Oops! 🚫 This page is restricted to{' '}
+            <span className='text-gray-200 font-semibold'>Admin users</span>{' '}
+            only.
+          </p>
+
+          {/* Action */}
+          <button
+            onClick={() => navigate('/')}
+            className='px-6 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition text-white font-medium shadow-md'
+          >
+            Go Back Home
+          </button>
         </div>
-
-        {/* Heading */}
-        <h1 className="text-2xl font-bold text-red-400 mb-2">
-          Access Denied
-        </h1>
-
-        {/* Message */}
-        <p className="text-gray-400 mb-6">
-          Oops! 🚫 This page is restricted to <span className="text-gray-200 font-semibold">Admin users</span> only.
-        </p>
-
-        {/* Action */}
-        <button
-          onClick={() => navigate("/")}
-          className="px-6 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition text-white font-medium shadow-md"
-        >
-          Go Back Home
-        </button>
       </div>
-    </div>
-  );
-}
+    )
+  }
 
   if (getSubmissionLoading || updateSubmissionLoading) {
     return (
@@ -151,6 +154,9 @@ const AdminSubmissionsPage = () => {
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-gray-200'>
+      <Helmet>
+        <title>Admin-Submission</title>
+      </Helmet>
       <ToastContainer />
       <div className='container mx-auto px-4 py-16 max-w-7xl'>
         <h1 className='text-3xl font-bold mb-8 text-center text-white'>

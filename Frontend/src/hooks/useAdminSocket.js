@@ -9,7 +9,7 @@ export const useAdminSocket = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const socket = io("https://music-demo-fullstack.vercel.app", {
+    const socket = io("http://localhost:5000", {
       auth: { token:localStorage.getItem('userToken') }, // JWT
     });
 

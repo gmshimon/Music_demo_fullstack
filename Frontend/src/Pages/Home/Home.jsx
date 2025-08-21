@@ -4,6 +4,7 @@ import WhyChooseSection from '@/components/WhyChooseSection/WhyChooseSection'
 import { reset } from '@/Redux/Slice/AuthSlice'
 import { showSuccessToast } from '@/Utlis/toastUtils'
 import React, { useEffect, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { useDispatch, useSelector } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -51,6 +52,11 @@ const Home = () => {
 
   return (
     <div className='min-h-screen bg-black text-white overflow-x-hidden'>
+      <Helmet>
+                <meta charSet="utf-8" />
+                <title>Music Demo</title>
+                <link rel="canonical" href="http://mysite.com/example" />
+            </Helmet>
       <ToastContainer/>
       <HeroSection
         isScrolled={isScrolled}
