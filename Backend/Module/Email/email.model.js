@@ -28,6 +28,6 @@ const emailSchema = mongoose.Schema(
     }
   }
 )
-const Email = mongoose.model('emails', emailTemplateSchema)
+const Email = mongoose.model('emails', emailSchema)
 
 export default Email

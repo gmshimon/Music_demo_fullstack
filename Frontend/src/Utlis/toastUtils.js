@@ -13,6 +13,7 @@ const toastOptions = {
 }
 
 export const showSuccessToast = (message) => {
+  console.log(message)
   toast.success(message, toastOptions)
 }
 

@@ -1,6 +1,6 @@
 import express from "express";
 import verifyToken from "../../Middleware/verifyToken.js";
-import { getAllEmails, getEmailById, updateEmail } from "./email.controller.js";
+import { getAllEmails, updateEmail } from "./email.controller.js";
 
 const router = express.Router();
 
