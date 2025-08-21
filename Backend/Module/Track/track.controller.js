@@ -1,6 +1,7 @@
 import { emitNewSubmission } from '../../Socket/index.js'
 import { submissionConfirmationTemplate } from '../../Utlis/EmailTemplate/email-templates.js'
 import { sendEmail } from '../../Utlis/sendEmail.js'
+import Email from '../Email/email.model.js'
 import Submission from '../Submission/submission.model.js'
 import { uploadTrackFile } from './track.cloudinary.js'
 import Tracks from './track.model.js'
@@ -61,26 +62,49 @@ export const createTrack = async (req, res, next) => {
       createdBy: _id
     })
 
-    // 1) Build email HTML
-    const html = submissionConfirmationTemplate({
-      userName: name,
-      tracks: createdTracks.map(t => ({
-        title: t.title,
-        genre: t.genre,
-        bpm: t.bpm,
-        key: t.key,
-        url: t.url,
-        uploadedAt: t.createdAt
-      })),
-      labelName: 'Music Demo'
+  // Send Email using the template
+
+    const template = await Email.findOne({
+      name: 'submission_confirmation'
     })
 
-    // 2) Send email
-    await sendEmail({
-      to: email,
-      subject: `Submission received – ${createdTracks.length} track(s) uploaded`,
-      html
-    })
+    if (template) {
+      // Build track list HTML
+      const trackListHtml = createdTracks
+        .map(
+          (t, i) =>
+            `<div style="margin-bottom:6px;">
+              ${i + 1}. <strong>${t.title || 'Untitled'}</strong> 
+              (${t.genre || 'Unknown'} | BPM: ${t.bpm || '-'} | Key: ${
+              t.key || '-'
+            })
+            </div>`
+        )
+        .join('')
+
+      // Prepare variables
+      const variables = {
+        artist_name: name,
+        label_name: 'Music Demo',
+        track_list: trackListHtml
+      }
+
+      // Replace placeholders
+      let subject = template.subject
+      let html = template.html
+      for (const key in variables) {
+        const regex = new RegExp(`{{${key}}}`, 'g')
+        subject = subject.replace(regex, variables[key] || '')
+        html = html.replace(regex, variables[key] || '')
+      }
+
+      // ✅ Send email
+      await sendEmail({
+        to: email,
+        subject,
+        html
+      })
+    }
 
     // ✅ emit event to all connected admins
     emitNewSubmission({
