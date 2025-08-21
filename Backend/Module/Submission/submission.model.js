@@ -45,6 +45,10 @@ const submissionSchema = mongoose.Schema(
       enum: ['Pending', 'In-Review', 'Approved', 'Rejected'],
       default: 'Pending',
       index: true
+    },
+    createdBy: {
+      type: ObjectId,
+      ref: 'users'
     }
   },
   {

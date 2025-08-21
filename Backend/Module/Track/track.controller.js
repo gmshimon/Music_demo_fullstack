@@ -6,8 +6,9 @@ import Tracks from './track.model.js'
 
 export const createTrack = async (req, res, next) => {
   try {
+    const {_id} = req.user
     const files = req.files || []
-console.log("files: ",req.files)
+
     const {
       name,
       email,
@@ -35,7 +36,6 @@ console.log("files: ",req.files)
 
     // 1) upload all files in parallel
     const urls = await Promise.all(files.map(f => uploadTrackFile(f)))
-    console.log(urls)
     // 2) build track docs (order-based mapping)
     const trackData = urls.map((url, i) => ({
       title: tracksMeta[i]?.title,
@@ -56,7 +56,8 @@ console.log("files: ",req.files)
       biography,
       location,
       socials: { instagram, soundcloud, spotify, youtube },
-      tracks: createdTracks.map(t => t._id)
+      tracks: createdTracks.map(t => t._id),
+      createdBy:_id
     })
 
     // 1) Build email HTML
