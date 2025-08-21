@@ -1,21 +1,15 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload, ChevronDown } from 'lucide-react';
-import Navbar from '../Navbar/Navbar';
 import AnimatedParticles from '../AnimatedParticles/AnimatedParticles';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate = useNavigate()
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-black via-gray-900 to-gray-800">
       {/* Animated background */}
       <AnimatedParticles />
-
-      {/* Navigation */}
-      {/* <Navbar
-        isScrolled={isScrolled}
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-      /> */}
 
       {/* Hero Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
@@ -34,6 +28,7 @@ const HeroSection = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
+            onClick={()=>navigate('/submit')}
               size="lg"
               className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-purple-500/25 transition-all duration-300 hover:scale-105"
             >
@@ -50,9 +45,7 @@ const HeroSection = () => {
             </Button>
           </div>
 
-          <div className="mt-12 flex justify-center animate-bounce">
-            <ChevronDown className="text-purple-400" size={32} />
-          </div>
+          
         </div>
       </div>
     </section>

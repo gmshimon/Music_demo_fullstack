@@ -13,6 +13,7 @@ import {
   DropdownMenuLabel
 } from '@/components/ui/dropdown-menu'
 import { logOut } from '@/Redux/Slice/AuthSlice'
+import { HashLink } from 'react-router-hash-link'
 
 const Navbar = ({ isScrolled, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const { user } = useSelector(state => state.user)
@@ -107,18 +108,20 @@ const Navbar = ({ isScrolled, isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
         {/* Desktop Navigation */}
         <div className='hidden md:flex items-center space-x-8'>
-          <a
-            href='#how-it-works'
+          <HashLink
+            smooth
+            to='/#how-it-works'
             className='text-gray-300 hover:text-purple-400 transition-colors'
           >
             How It Works
-          </a>
-          <a
-            href='#why-choose'
+          </HashLink>
+          <HashLink
+            smooth
+            to='/#why-choose'
             className='text-gray-300 hover:text-purple-400 transition-colors'
           >
             Why Choose Us
-          </a>
+          </HashLink>
 
           {user ? (
             UserMenu
