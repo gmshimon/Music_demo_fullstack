@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar/Navbar'
+import CurrentUser from '@/Utlis/CurrentUser'
 import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
@@ -12,7 +13,7 @@ const Main = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-
+  CurrentUser()
   return (
     <div>
       <Navbar

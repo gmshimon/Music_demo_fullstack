@@ -1,3 +1,4 @@
+import generateToken from '../../Utlis/token.js'
 import Users from './user.model.js'
 export const createUser = async (req, res, next) => {
   try {
