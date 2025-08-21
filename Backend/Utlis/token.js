@@ -8,9 +8,7 @@ const generateToken = userInfo => {
     role: userInfo.role
   }
 
-  const token = jwt.sign(playLoad, process.env.TOKEN_SECRET, {
-    expiresIn: '8h'
-  })
+  const token = jwt.sign(playLoad, process.env.TOKEN_SECRET)
 
   return token
 }

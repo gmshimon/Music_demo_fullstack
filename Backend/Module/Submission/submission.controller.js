@@ -1,3 +1,5 @@
+import { sendEmail } from '../../Utlis/sendEmail.js'
+import Email from '../Email/email.model.js'
 import Submission from './submission.model.js'
 
 export const getMySubmissions = async (req, res, next) => {
@@ -71,6 +73,43 @@ export const updateSubmission = async (req, res, next) => {
 
     if (!updatedSubmission) {
       return res.status(404).json({ message: 'Submission not found' })
+    }
+
+    const template = await Email.findOne({
+      name: 'submission_status_update'
+    })
+
+    if (template) {
+      // Prepare variables
+      const variables = {
+        artist_name: updatedSubmission?.name || 'Artist',
+        label_name: 'Music Demo',
+        status: updatedSubmission.status,
+        feedback: updatedSubmission.review?.feedback || ''
+      }
+
+      // Replace placeholders (Handlebars-style)
+      let subject = template.subject
+      let html = template.html
+      for (const key in variables) {
+        const regex = new RegExp(`{{${key}}}`, 'g')
+        subject = subject.replace(regex, variables[key] || '')
+        html = html.replace(regex, variables[key] || '')
+      }
+
+      // If template has conditional {{#if feedback}}
+      if (!variables.feedback) {
+        html = html.replace(/{{#if feedback}}[\s\S]*?{{\/if}}/, '')
+      } else {
+        html = html.replace(/{{#if feedback}}|{{\/if}}/g, '')
+      }
+
+      // ✅ Send email
+      await sendEmail({
+        to: updatedSubmission?.email,
+        subject,
+        html
+      })
     }
 
     return res.status(200).json({

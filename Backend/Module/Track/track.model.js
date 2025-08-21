@@ -6,7 +6,7 @@ const trackSchema = mongoose.Schema(
     genre: { type: String, trim: true },
     bpm: { type: Number, min: 0, max: 400 },
     key: { type: String, trim: true }, // e.g. "Am", "C#"
-    url: { type: String, required: true, trim: true },
+    url: { type: String, required: true, trim: true }
   },
   { timestamps: true }
 )
