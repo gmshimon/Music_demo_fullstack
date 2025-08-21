@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Search, Filter } from 'lucide-react'
+import { Search, Filter, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import WaveSurfer from 'wavesurfer.js'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,6 +14,7 @@ import { showErrorToast, showSuccessToast } from '@/Utlis/toastUtils'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useAdminSocket } from '@/hooks/useAdminSocket'
+import { useNavigate } from 'react-router-dom'
 
 const AdminSubmissionsPage = () => {
   const {
@@ -23,6 +24,7 @@ const AdminSubmissionsPage = () => {
     updateSubmissionSuccess,
     updateSubmissionError
   } = useSelector(state => state.submission)
+  const { user } = useSelector(state => state.user)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('All')
   const [selected, setSelected] = useState(null)
@@ -33,8 +35,9 @@ const AdminSubmissionsPage = () => {
     status: 'Pending'
   })
 
-    useAdminSocket();
+  useAdminSocket()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   useEffect(() => {
     dispatch(getAllSubmissions())
   }, [dispatch])
@@ -104,6 +107,39 @@ const AdminSubmissionsPage = () => {
       ws.play()
     })
   }
+
+  if (user?.role !== "Admin") {
+  return (
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 text-gray-200">
+      <div className="text-center p-8 rounded-2xl bg-gray-900/60 backdrop-blur-md shadow-lg max-w-md animate-fadeIn">
+        {/* Icon */}
+        <div className="flex justify-center mb-4">
+          <div className="p-4 rounded-full bg-red-500/10 border border-red-500/30">
+            <ShieldAlert className="w-10 h-10 text-red-400" />
+          </div>
+        </div>
+
+        {/* Heading */}
+        <h1 className="text-2xl font-bold text-red-400 mb-2">
+          Access Denied
+        </h1>
+
+        {/* Message */}
+        <p className="text-gray-400 mb-6">
+          Oops! 🚫 This page is restricted to <span className="text-gray-200 font-semibold">Admin users</span> only.
+        </p>
+
+        {/* Action */}
+        <button
+          onClick={() => navigate("/")}
+          className="px-6 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition text-white font-medium shadow-md"
+        >
+          Go Back Home
+        </button>
+      </div>
+    </div>
+  );
+}
 
   if (getSubmissionLoading || updateSubmissionLoading) {
     return (

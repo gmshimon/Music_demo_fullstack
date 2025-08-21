@@ -1,47 +1,63 @@
-import Main from "@/Layout/Main";
-import AdminEmailTemplatesPage from "@/Pages/AdminEmailTemplatesPage/AdminEmailTemplatesPage";
-import AdminSubmissionsPage from "@/Pages/AdminSubmissionsPage/AdminSubmissionsPage";
-import ArtistSubmissionPage from "@/Pages/ArtistSubmissionPage/ArtistSubmissionPage";
-import ArtistSubmissionsListPage from "@/Pages/ArtistSubmissionsListPage/ArtistSubmissionsListPage";
-import Home from "@/Pages/Home/Home";
-import Login from "@/Pages/Login/Login";
-import Registration from "@/Pages/Registration/Registration";
-import { createBrowserRouter } from "react-router";
-
+import PrivateRoute from '@/components/PrivateRoute/PrivateRoute'
+import Main from '@/Layout/Main'
+import AdminEmailTemplatesPage from '@/Pages/AdminEmailTemplatesPage/AdminEmailTemplatesPage'
+import AdminSubmissionsPage from '@/Pages/AdminSubmissionsPage/AdminSubmissionsPage'
+import ArtistSubmissionPage from '@/Pages/ArtistSubmissionPage/ArtistSubmissionPage'
+import ArtistSubmissionsListPage from '@/Pages/ArtistSubmissionsListPage/ArtistSubmissionsListPage'
+import Home from '@/Pages/Home/Home'
+import Login from '@/Pages/Login/Login'
+import Registration from '@/Pages/Registration/Registration'
+import { createBrowserRouter } from 'react-router'
 
 export const router = createBrowserRouter([
-    {
-        path:'/',
-        element:<Main/>,
-        children:[
-            {
-                path:'',
-                element:<Home/>
-            },
-            {
-                path:'login',
-                element:<Login/>
-            },
-            {
-                path:'register',
-                element:<Registration/>
-            },
-            {
-                path:'submit',
-                element:<ArtistSubmissionPage/>
-            },
-            {
-                path:'submission',
-                element:<ArtistSubmissionsListPage/>
-            },
-            {
-                path:'admin/submissions',
-                element:<AdminSubmissionsPage/>
-            },
-            {
-                path:'admin/email',
-                element:<AdminEmailTemplatesPage/>
-            }
-        ]
-    }
+  {
+    path: '/',
+    element: <Main />,
+    children: [
+      {
+        path: '',
+        element: <Home />
+      },
+      {
+        path: 'login',
+        element: <Login />
+      },
+      {
+        path: 'register',
+        element: <Registration />
+      },
+      {
+        path: 'submit',
+        element: (
+          <PrivateRoute>
+            <ArtistSubmissionPage />
+          </PrivateRoute>
+        )
+      },
+      {
+        path: 'submission',
+        element: (
+          <PrivateRoute>
+            <ArtistSubmissionsListPage />
+          </PrivateRoute>
+        )
+      },
+      {
+        path: 'admin/submissions',
+        element: (
+          <PrivateRoute>
+            <AdminSubmissionsPage />
+          </PrivateRoute>
+        )
+      },
+      {
+        path: 'admin/email',
+        element: (
+          <PrivateRoute>
+            <AdminEmailTemplatesPage />
+          </PrivateRoute>
+        )
+      }
+    ]
+  }
 ])
