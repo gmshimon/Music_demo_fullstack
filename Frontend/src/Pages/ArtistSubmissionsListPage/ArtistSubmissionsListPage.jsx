@@ -1,80 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Search, CheckCircle, XCircle, Clock, Music } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-
-// Dummy data matching your Submission + Track schema
-const dummySubmissions = [
-  {
-    _id: 'sub1',
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '+49123456789',
-    biography: 'John is an upcoming DJ and music producer focusing on techno and house.',
-    location: 'Berlin, Germany',
-    socials: {
-      instagram: 'https://instagram.com/johndoe',
-      soundcloud: 'https://soundcloud.com/johndoe'
-    },
-    tracks: [
-      { _id: 't1', title: 'Midnight Groove', genre: 'Techno', bpm: 128, key: 'Am', url: '/tracks/midnight.mp3' },
-      { _id: 't2', title: 'Sunrise Flow', genre: 'House', bpm: 124, key: 'C#', url: '/tracks/sunrise.mp3' }
-    ],
-    review: {
-      reviewer: 'rev1',
-      score: 8,
-      notes: 'Strong rhythm, needs better mastering.',
-      feedbackForArtist: 'Great track overall! Work a bit more on your mix balance.'
-    },
-    status: 'In-Review',
-    createdAt: new Date().toISOString()
-  },
-  {
-    _id: 'sub2',
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-    phone: '',
-    biography: 'Jane creates experimental ambient music with cinematic soundscapes.',
-    location: 'Munich, Germany',
-    socials: {
-      spotify: 'https://open.spotify.com/jane-smith'
-    },
-    tracks: [
-      { _id: 't3', title: 'Dreamscapes', genre: 'Ambient', bpm: 70, key: 'C', url: '/tracks/dreamscapes.mp3' }
-    ],
-    review: null,
-    status: 'Pending',
-    createdAt: new Date().toISOString()
-  },
-  {
-    _id: 'sub3',
-    name: 'DJ Nightfall',
-    email: 'dj@beats.com',
-    phone: '+49111222333',
-    biography: 'Nightfall is a festival DJ known for high-energy progressive sets.',
-    location: 'Hamburg, Germany',
-    socials: {
-      youtube: 'https://youtube.com/djnightfall'
-    },
-    tracks: [
-      { _id: 't4', title: 'Bassline Attack', genre: 'Progressive House', bpm: 130, key: 'Gm', url: '/tracks/bassline.mp3' },
-      { _id: 't5', title: 'Festival Anthem', genre: 'EDM', bpm: 132, key: 'Dm', url: '/tracks/festival.mp3' }
-    ],
-    review: {
-      reviewer: 'rev2',
-      score: 6,
-      notes: 'Energetic but repetitive.',
-      feedbackForArtist: 'Try varying your drops to keep the energy fresh.'
-    },
-    status: 'Approved',
-    createdAt: new Date().toISOString()
-  }
-]
+import { useDispatch, useSelector } from 'react-redux'
+import { getMySubmissions } from '@/Redux/Slice/SubmissionSlice'
+import Loading from '@/components/Loading/Loading'
 
 const ArtistSubmissionsListPage = () => {
-    const [search, setSearch] = useState('')
+  const { submissions, getSubmissionLoading } = useSelector(
+    state => state.submission
+  )
+  const [search, setSearch] = useState('')
   const [selected, setSelected] = useState(null)
 
-  const filtered = dummySubmissions.filter(s =>
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(getMySubmissions())
+  }, [dispatch])
+
+  const filtered = submissions.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -89,6 +32,14 @@ const ArtistSubmissionsListPage = () => {
       default:
         return <Clock className='text-yellow-400 w-5 h-5' />
     }
+  }
+
+  if (getSubmissionLoading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    )
   }
 
   return (
@@ -166,7 +117,9 @@ const ArtistSubmissionsListPage = () => {
                 <p className='text-gray-400 mb-2'>Phone: {selected.phone}</p>
               )}
               {selected.location && (
-                <p className='text-gray-400 mb-2'>Location: {selected.location}</p>
+                <p className='text-gray-400 mb-2'>
+                  Location: {selected.location}
+                </p>
               )}
               {selected.biography && (
                 <p className='text-gray-400 mb-4 text-sm'>
@@ -177,8 +130,16 @@ const ArtistSubmissionsListPage = () => {
               <h3 className='text-lg font-semibold mt-4 mb-2'>Tracks</h3>
               <ul className='list-disc pl-5 text-gray-300 text-sm mb-4'>
                 {selected.tracks.map(t => (
-                  <li key={t._id}>
-                    {t.title} ({t.genre || 'Unknown'}) – {t.bpm} BPM [{t.key}]
+                  <li key={t._id} className='flex flex-col'>
+                    <span className='mb-1'>
+                      {t.title} ({t.genre || 'Unknown'}) – {t.bpm} BPM [{t.key}]
+                    </span>
+                    <audio
+                      src={t.url}
+                      controls
+                      autoPlay // 🔥 makes it play automatically
+                      className='w-full mt-1'
+                    />
                   </li>
                 ))}
               </ul>
@@ -187,7 +148,7 @@ const ArtistSubmissionsListPage = () => {
                 <div className='mb-4'>
                   <h3 className='text-lg font-semibold'>Review</h3>
                   <p className='text-gray-400 text-sm'>
-                    Score: {selected.review.score}/10
+                    Score: {selected.review.score || 0}/10
                   </p>
                   {selected.review.feedbackForArtist && (
                     <p className='text-gray-400 text-sm mt-1'>
@@ -209,6 +170,6 @@ const ArtistSubmissionsListPage = () => {
       </div>
     </div>
   )
-};
+}
 
-export default ArtistSubmissionsListPage;
+export default ArtistSubmissionsListPage
